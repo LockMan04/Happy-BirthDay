@@ -415,7 +415,7 @@ function animate() {
             }
         }
     }
-    
+
     renderer.render(scene, camera);
 }
 
@@ -435,4 +435,51 @@ setTimeout(() => {
     document.querySelector('.card-container').style.transition = 'opacity 1s';
     document.querySelector('.card-container').style.opacity = 1;
 }, 1500);
+
+// Xử lý phần âm nhạc
+const musicToggle = document.getElementById("music-toggle");
+const birthdayMusic = document.getElementById("birthday-music");
+let musicInitialized = false;
+// Xử lý sự kiện click vào card để phát nhạc lần đầu tiên
+document.querySelector(".card").addEventListener("click", function (e) {
+  // Khởi tạo nhạc khi người dùng tương tác lần đầu
+  if (!musicInitialized) {
+    birthdayMusic.volume = 0.5; // Đặt âm lượng ở mức 50%
+    birthdayMusic.play().catch((error) => {
+      console.log("Không thể tự động phát nhạc:", error);
+    });
+    musicInitialized = true;
+    musicToggle.classList.add("playing");
+  }
+});
+// Xử lý nút bật/tắt nhạc
+musicToggle.addEventListener("click", function () {
+  if (!musicInitialized) {
+    // Lần đầu bấm vào nút nhạc
+    birthdayMusic.volume = 0.5;
+    birthdayMusic.play().catch((error) => {
+      console.log("Không thể tự động phát nhạc:", error);
+    });
+    musicInitialized = true;
+    this.classList.add("playing");
+  } else {
+    // Đã khởi tạo nhạc, bật/tắt
+    if (birthdayMusic.paused) {
+      birthdayMusic.play();
+      this.classList.add("playing");
+      this.classList.remove("muted");
+      this.querySelector(".music-icon").textContent = "🔊";
+    } else {
+      birthdayMusic.pause();
+      this.classList.remove("playing");
+      this.classList.add("muted");
+      this.querySelector(".music-icon").textContent = "🔈";
+    }
+  }
+});
+// Thêm xử lý sự kiện khi người dùng đóng thiệp
+document.querySelector(".close-card").addEventListener("click", function (e) {
+  e.stopPropagation(); // Ngăn sự kiện click lan tỏa đến thẻ cha
+  document.querySelector(".card").classList.remove("flipped");
+});
 });
